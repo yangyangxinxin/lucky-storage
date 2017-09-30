@@ -102,8 +102,7 @@ public class OSSStoreService implements StorageApi {
         try {
             Date now = new Date();
             Date date = DateUtils.addYears(now, 100);
-            Long diff = date.getTime() - now.getTime();
-            return getHttpUrl(storeId, diff);
+            return getHttpUrl(storeId, date.getTime());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new StorageException(e.getMessage());
@@ -113,9 +112,7 @@ public class OSSStoreService implements StorageApi {
     @Override
     public String getHttpUrl(String storeId, Long expire) throws StorageException {
         try {
-            int amount = Integer.valueOf(expire + "");
-            Date date = DateUtils.addMilliseconds(new Date(), amount);
-            URL url = ossClient.generatePresignedUrl(storageGroupService.getGroupName(storeId), storeId, date);
+            URL url = ossClient.generatePresignedUrl(storageGroupService.getGroupName(storeId), storeId, new Date(expire));
             return url.toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

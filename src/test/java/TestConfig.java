@@ -58,11 +58,12 @@ public class TestConfig {
     @Test
     public void test3(){
         PutObject putObject = new PutObject();
-        byte[] bytes = "测试上传接口2222".getBytes();
+        String str = "heello";
+        byte[] bytes = str.getBytes();
         putObject.setBytes(bytes);
         putObject.setGroupName(storageGroupService.getUserGroupName());
         try {
-            String result = storageApi.putObject(putObject); // lucky-user-dev/8847358877965225984
+            String result = storageApi.putObject(putObject); // lucky-user-dev/350F9C92127C40128BEA12B1B5C88C6E
             System.out.println(result);
         } catch (StorageException e) {
             logger.error(e.getMessage(), e);
@@ -72,7 +73,7 @@ public class TestConfig {
     @Test
     public void test4(){
         try {
-            byte[] bytes = storageApi.getObject("lucky-user-dev/8847358877965225984");
+            byte[] bytes = storageApi.getObject("lucky-user-dev/350F9C92127C40128BEA12B1B5C88C6E");
             System.out.println(new String(bytes));
         } catch (StorageException e) {
             logger.error(e.getMessage(), e);
@@ -85,7 +86,7 @@ public class TestConfig {
             byte[] bytes = FileUtils.readFileToByteArray(new File("C:\\Users\\dp\\Desktop\\图片\\070.jpg"));
             PutObject putObject = new PutObject();
             putObject.setBytes(bytes);
-            putObject.setGroupName(storageGroupService.getUserGroupName());
+            putObject.setGroupName(storageGroupService.getDefaultGroupName());
             putObject.setExtName(".jpg");
             putObject.setFileName("070");
             putObject.setLength(bytes.length);
@@ -99,7 +100,7 @@ public class TestConfig {
     @Test
     public void test6(){
         try {
-            String httpUrl = storageApi.getHttpUrl("lucky-user-dev/8847372361260077056.jpg");
+            String httpUrl = storageApi.getHttpUrl("lucky-bubu-dev/FDC5930D777944839413C3FCFC31D75A.jpg");
             System.out.println(httpUrl);
         } catch (StorageException e) {
             logger.error(e.getMessage(), e);
