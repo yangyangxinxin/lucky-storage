@@ -1,6 +1,7 @@
 import com.aliyun.oss.OSSClient;
 import com.luckysweetheart.storage.StorageApi;
 import com.luckysweetheart.storage.StorageGroupService;
+import com.luckysweetheart.storage.dto.Group;
 import com.luckysweetheart.storage.exception.StorageException;
 import com.luckysweetheart.storage.request.PutObject;
 import org.apache.commons.io.FileUtils;
@@ -14,6 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.io.*;
+import java.util.List;
 
 /**
  * Created by yangxin on 2017/9/21.
@@ -33,21 +35,30 @@ public class TestConfig {
     @Resource
     private StorageApi storageApi;
 
+
     @Test
     public void test1(){
         System.out.println(ossClient);
-        System.out.println(storageGroupService.getOosDefaultGroupName());
     }
 
     @Test
     public void test2() throws StorageException {
-        logger.info(storageApi.groupList().toString());
+        List<Group> groups = storageApi.groupList();
+        for (Group group : groups) {
+            String name = group.getName();
+            System.out.println(name);
+            /*try {
+                ossClient.deleteBucket(name);
+            }catch (Exception e){
+                logger.error(e.getMessage());
+            }*/
+        }
     }
 
     @Test
     public void test3(){
         PutObject putObject = new PutObject();
-        byte[] bytes = "测试上传接口".getBytes();
+        byte[] bytes = "测试上传接口2222".getBytes();
         putObject.setBytes(bytes);
         putObject.setGroupName(storageGroupService.getUserGroupName());
         try {

@@ -11,13 +11,13 @@
     <bean class="com.luckysweetheart.storage.util.SpringUtil" lazy-init="false"/>
 
     <bean class="com.luckysweetheart.storage.StorageGroupService">
-        <property name="storageStrategy" value="${storage.strategy}"/>
+        <!--<property name="storageStrategy" value="${storage.strategy}"/>
         <property name="cosDefaultGroupName" value="${cos.defaultGroupName}"/>
         <property name="cosPhotoGroupName" value="${cos.photoGroupName}"/>
         <property name="cosUserGroupName" value="${cos.userGroupName}/"/>
         <property name="oosDefaultGroupName" value="${oos.defaultGroupName}"/>
         <property name="oosPhotoGroupName" value="${oos.photoGroupName}"/>
-        <property name="oosUserGroupName" value="${oos.userGroupName}"/>
+        <property name="oosUserGroupName" value="${oos.userGroupName}"/>-->
     </bean>
     
     <bean id="clientConfiguration" class="com.aliyun.oss.ClientConfiguration">

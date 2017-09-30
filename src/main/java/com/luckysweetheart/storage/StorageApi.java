@@ -1,5 +1,6 @@
 package com.luckysweetheart.storage;
 
+import com.aliyun.oss.model.ObjectMetadata;
 import com.luckysweetheart.storage.dto.Group;
 import com.luckysweetheart.storage.exception.StorageException;
 import com.luckysweetheart.storage.request.PutObject;
@@ -60,13 +61,6 @@ public interface StorageApi {
 
     /**
      * 获取图片的网络访问地址，并指定有效期
-     * <pre>
-     *     指定过期时间为2天后
-     *     <code>
-     *         Date date = DateUtils.addDays(new Date(), 2);
-     *         Long expire = date.getTime()
-     *     </code>
-     * </pre>
      *
      * @param storeId
      * @param expire  过期时间
@@ -74,5 +68,23 @@ public interface StorageApi {
      * @throws StorageException
      */
     String getHttpUrl(String storeId, Long expire) throws StorageException;
+
+    /**
+     * 判断某个文件是否存在
+     *
+     * @param storeId
+     * @return
+     * @throws StorageException
+     */
+    boolean doesObjectExist(String storeId) throws StorageException;
+
+    /**
+     * 获取文件的元信息
+     *
+     * @param storeId
+     * @return
+     * @throws StorageException
+     */
+    ObjectMetadata getObjectMetadata(String storeId) throws StorageException;
 
 }

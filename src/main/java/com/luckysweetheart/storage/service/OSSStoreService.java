@@ -2,8 +2,11 @@ package com.luckysweetheart.storage.service;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.Bucket;
+import com.aliyun.oss.model.HeadObjectRequest;
 import com.aliyun.oss.model.OSSObject;
+import com.aliyun.oss.model.ObjectMetadata;
 import com.luckysweetheart.storage.StorageApi;
+import com.luckysweetheart.storage.StorageGroupService;
 import com.luckysweetheart.storage.dto.Group;
 import com.luckysweetheart.storage.exception.StorageException;
 import com.luckysweetheart.storage.request.PutObject;
@@ -11,6 +14,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
@@ -32,6 +36,9 @@ public class OSSStoreService implements StorageApi {
 
     @Resource
     private OSSClient ossClient;
+
+    @Resource
+    private StorageGroupService storageGroupService;
 
     public List<Group> groupList() throws StorageException {
         List<Bucket> buckets = ossClient.listBuckets();
@@ -65,8 +72,7 @@ public class OSSStoreService implements StorageApi {
     public byte[] getObject(String storeId) throws StorageException {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
-            String[] keys = storeId.split("/");
-            OSSObject ossObject = ossClient.getObject(keys[0], storeId);
+            OSSObject ossObject = ossClient.getObject(storageGroupService.getGroupName(storeId), storeId);
             InputStream inputStream = ossObject.getObjectContent();
             byte[] data = new byte[BUFFER_SIZE];
             int count = -1;
@@ -84,8 +90,7 @@ public class OSSStoreService implements StorageApi {
 
     public boolean deleteObject(String storeId) throws StorageException {
         try {
-            String[] keys = storeId.split("/");
-            ossClient.deleteObject(keys[0], storeId);
+            ossClient.deleteObject(storageGroupService.getGroupName(storeId), storeId);
             return true;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -95,10 +100,12 @@ public class OSSStoreService implements StorageApi {
 
     public String getHttpUrl(String storeId) throws StorageException {
         try {
-            Date date = DateUtils.addYears(new Date(), 100);
-            return getHttpUrl(storeId,date.getTime());
-        }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            Date now = new Date();
+            Date date = DateUtils.addYears(now, 100);
+            Long diff = date.getTime() - now.getTime();
+            return getHttpUrl(storeId, diff);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new StorageException(e.getMessage());
         }
     }
@@ -106,16 +113,37 @@ public class OSSStoreService implements StorageApi {
     @Override
     public String getHttpUrl(String storeId, Long expire) throws StorageException {
         try {
-            URL url = ossClient.generatePresignedUrl(getGroupName(storeId), storeId, new Date(expire));
+            int amount = Integer.valueOf(expire + "");
+            Date date = DateUtils.addMilliseconds(new Date(), amount);
+            URL url = ossClient.generatePresignedUrl(storageGroupService.getGroupName(storeId), storeId, date);
             return url.toString();
-        }catch (Exception e){
-            logger.error(e.getMessage(),e);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new StorageException(e.getMessage());
         }
     }
 
-    private String getGroupName(String storeId){
-        String[] keys = storeId.split("/");
-        return keys[0];
+    @Override
+    public boolean doesObjectExist(String storeId) throws StorageException {
+        try {
+            String group = storageGroupService.getGroupName(storeId);
+            HeadObjectRequest headObjectRequest = new HeadObjectRequest(group, storeId);
+            return ossClient.doesObjectExist(headObjectRequest);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new StorageException(e.getMessage());
+        }
     }
+
+    @Override
+    public ObjectMetadata getObjectMetadata(String storeId) throws StorageException {
+        try {
+            return ossClient.getObjectMetadata(storageGroupService.getGroupName(storeId), storeId);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new StorageException(e.getMessage());
+        }
+    }
+
+
 }
