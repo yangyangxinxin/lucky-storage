@@ -1,7 +1,8 @@
 package com.luckysweetheart.storage;
 
-import com.aliyun.oss.model.ObjectMetadata;
+import com.luckysweetheart.storage.dto.FileMetaInfo;
 import com.luckysweetheart.storage.dto.Group;
+import com.luckysweetheart.storage.dto.ObjectSummary;
 import com.luckysweetheart.storage.exception.StorageException;
 import com.luckysweetheart.storage.request.PutObject;
 import org.springframework.stereotype.Component;
@@ -16,12 +17,39 @@ import java.util.List;
 public interface StorageApi {
 
     /**
-     * 列出所有的Bucket
+     * 列出所有的Bucket，如果在运行环境中指定了环境，那么根据环境配置来取Bucket
      *
      * @return
      * @throws StorageException
      */
     List<Group> groupList() throws StorageException;
+
+    /**
+     * 列出指定前缀的Bucket
+     *
+     * @param prefix 前缀，为null查询全部
+     * @return
+     * @throws StorageException
+     */
+    List<Group> groupList(String prefix) throws StorageException;
+
+    /**
+     * 获取某个组下的文件，最多能取1000个
+     *
+     * @param groupName 组名
+     * @return
+     * @throws StorageException
+     */
+    List<ObjectSummary> objectList(String groupName) throws StorageException;
+
+    /**
+     * 计算某个组所占用的空间大小
+     *
+     * @param groupName
+     * @return
+     * @throws StorageException
+     */
+    long groupFileSize(String groupName) throws StorageException;
 
     /**
      * 上传文件
@@ -85,6 +113,6 @@ public interface StorageApi {
      * @return
      * @throws StorageException
      */
-    ObjectMetadata getObjectMetadata(String storeId) throws StorageException;
+    FileMetaInfo getFileMetaInfo(String storeId) throws StorageException;
 
 }

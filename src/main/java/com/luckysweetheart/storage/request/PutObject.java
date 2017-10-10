@@ -2,6 +2,8 @@ package com.luckysweetheart.storage.request;
 
 import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectRequest;
+import com.luckysweetheart.storage.StorageGroupService;
+import com.luckysweetheart.storage.dto.FileMetaInfo;
 import com.luckysweetheart.storage.util.Cons;
 import com.luckysweetheart.storage.util.IdWorker;
 import com.luckysweetheart.storage.util.SpringUtil;
@@ -9,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.io.ByteArrayInputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -49,17 +52,14 @@ public class PutObject {
      */
     private long length;
 
-    /**
-     * 文件元数组
-     */
-    private ObjectMetadata objectMetadata;
+    private FileMetaInfo fileMetaInfo;
 
-    public ObjectMetadata getObjectMetadata() {
-        return objectMetadata;
+    public FileMetaInfo getFileMetaInfo() {
+        return fileMetaInfo;
     }
 
-    public void setObjectMetadata(ObjectMetadata objectMetadata) {
-        this.objectMetadata = objectMetadata;
+    public void setFileMetaInfo(FileMetaInfo fileMetaInfo) {
+        this.fileMetaInfo = fileMetaInfo;
     }
 
     public long getLength() {
@@ -117,7 +117,9 @@ public class PutObject {
      */
     public PutObjectRequest build() {
         Assert.notNull(bytes, "文件不能为空");
-        Assert.notNull(groupName, "存储组名不能为空");
+        StorageGroupService storageGroupService = SpringUtil.getBean(StorageGroupService.class);
+        groupName = StringUtils.isBlank(groupName) ? storageGroupService.getDefaultGroupName() : groupName;
+        Assert.isTrue(StringUtils.isNotBlank(groupName), "存储组名不能为空");
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
 
         if (StringUtils.isBlank(this.storeId)) {
@@ -127,13 +129,23 @@ public class PutObject {
                 this.storeId += this.extName;
             }
         }
-        if (this.objectMetadata == null) {
-            this.objectMetadata = new ObjectMetadata();
-            this.objectMetadata.setContentLength(this.length);
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        if (fileMetaInfo == null) {
+            objectMetadata.setContentLength(this.length);
 
             Map<String, String> userMetadata = new HashMap<>();
             userMetadata.put(Cons.KEY_FILENAME, this.fileName);
             userMetadata.put(Cons.KEY_EXTNAME, this.extName);
+
+            objectMetadata.setUserMetadata(userMetadata);
+
+            fileMetaInfo = new FileMetaInfo(fileName, extName, null, length, new Date().getTime());
+        } else {
+            objectMetadata.setContentLength(fileMetaInfo.getLength());
+
+            Map<String, String> userMetadata = new HashMap<>();
+            userMetadata.put(Cons.KEY_FILENAME, fileMetaInfo.getFileName());
+            userMetadata.put(Cons.KEY_EXTNAME, fileMetaInfo.getExtName());
 
             objectMetadata.setUserMetadata(userMetadata);
         }

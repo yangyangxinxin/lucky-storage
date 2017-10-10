@@ -15,6 +15,16 @@ public class Group implements Serializable {
 
     private Date createTime;
 
+    private String location;
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public String getName() {
         return name;
     }

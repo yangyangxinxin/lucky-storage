@@ -1,7 +1,11 @@
+import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.model.Bucket;
+import com.aliyun.oss.model.ObjectMetadata;
 import com.luckysweetheart.storage.StorageApi;
 import com.luckysweetheart.storage.StorageGroupService;
 import com.luckysweetheart.storage.dto.Group;
+import com.luckysweetheart.storage.dto.ObjectSummary;
 import com.luckysweetheart.storage.exception.StorageException;
 import com.luckysweetheart.storage.request.PutObject;
 import org.apache.commons.io.FileUtils;
@@ -10,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -22,6 +27,7 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath*:/spring/spring-storage.xml"})
+@ActiveProfiles("prod")
 public class TestConfig {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -35,10 +41,21 @@ public class TestConfig {
     @Resource
     private StorageApi storageApi;
 
+    @Test
+    public void testCreate() {
+        Bucket bucket = ossClient.createBucket("prod-default");
+        System.out.println(bucket);
+        bucket = ossClient.createBucket("prod-photo");
+        System.out.println(bucket);
+        bucket = ossClient.createBucket("prod-user");
+        System.out.println(bucket);
+    }
 
     @Test
     public void test1(){
-        System.out.println(ossClient);
+        System.out.println(storageGroupService.getDefaultGroupName());
+        System.out.println(storageGroupService.getPhotoGroupName());
+        System.out.println(storageGroupService.getUserGroupName());
     }
 
     @Test
@@ -47,11 +64,15 @@ public class TestConfig {
         for (Group group : groups) {
             String name = group.getName();
             System.out.println(name);
-            /*try {
-                ossClient.deleteBucket(name);
-            }catch (Exception e){
-                logger.error(e.getMessage());
-            }*/
+        }
+    }
+
+    @Test
+    public void testFilter() throws StorageException {
+        List<Group> groups = storageApi.groupList("prod");
+        for (Group group : groups) {
+            String name = group.getName();
+            System.out.println(name);
         }
     }
 
@@ -111,5 +132,16 @@ public class TestConfig {
     public void test7() throws StorageException {
         boolean deleteObject = storageApi.deleteObject("lucky-user-dev/8847372361260077056.jpg");
         System.out.println(deleteObject);
+    }
+
+    @Test
+    public void test8() throws StorageException {
+        System.out.println(storageApi.doesObjectExist("lucky-bubu-dev/FDC5930D777944839413C3FCFC31D75A.jpg"));
+    }
+
+    @Test
+    public void test9() throws StorageException {
+        Long size = storageApi.groupFileSize(storageGroupService.getDefaultGroupName());
+        System.out.println(size);
     }
 }

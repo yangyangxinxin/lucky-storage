@@ -29,6 +29,10 @@ public class IdWorker {
 
     private long lastTimestamp = -1L;
 
+    public static void main(String[] args) {
+        System.out.println(1 << 4);
+    }
+
     public IdWorker(long workerId, long datacenterId) {
         // sanity check for workerId
         if (workerId > maxWorkerId || workerId < 0) {

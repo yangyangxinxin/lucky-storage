@@ -4,29 +4,19 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="com.luckysweetheart.storage.*"/>
+    <context:component-scan base-package="com.luckysweetheart.storage"/>
 
     <context:property-placeholder location="classpath:properties/app.properties" ignore-unresolvable="true"/>
 
     <bean class="com.luckysweetheart.storage.util.SpringUtil" lazy-init="false"/>
 
-    <bean class="com.luckysweetheart.storage.StorageGroupService">
-        <!--<property name="storageStrategy" value="${storage.strategy}"/>
-        <property name="cosDefaultGroupName" value="${cos.defaultGroupName}"/>
-        <property name="cosPhotoGroupName" value="${cos.photoGroupName}"/>
-        <property name="cosUserGroupName" value="${cos.userGroupName}/"/>
-        <property name="oosDefaultGroupName" value="${oos.defaultGroupName}"/>
-        <property name="oosPhotoGroupName" value="${oos.photoGroupName}"/>
-        <property name="oosUserGroupName" value="${oos.userGroupName}"/>-->
-    </bean>
-    
     <bean id="clientConfiguration" class="com.aliyun.oss.ClientConfiguration">
         <property name="maxConnections" value="200"/>
         <property name="socketTimeout" value="10000"/>
         <property name="maxErrorRetry" value="5"/>
     </bean>
-    
-    <bean class="com.aliyun.oss.OSSClient" id="ossClient">
+
+    <bean class="com.aliyun.oss.OSSClient" id="ossClient" destroy-method="shutdown">
         <constructor-arg index="0" type="java.lang.String" value="${oss.endPoint}"/>
         <constructor-arg index="1" type="java.lang.String" value="${oss.access.key.id}"/>
         <constructor-arg index="2" type="java.lang.String" value="${oss.access.key.sercet}"/>
