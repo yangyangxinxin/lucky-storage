@@ -44,6 +44,7 @@ public class OSSStoreService implements StorageApi {
     @Resource
     private Environment environment;
 
+    @Override
     public List<Group> groupList() throws StorageException {
         String[] strings = environment.getActiveProfiles();
         String profile = null;
@@ -131,6 +132,7 @@ public class OSSStoreService implements StorageApi {
         }
     }
 
+    @Override
     public String putObject(PutObject putObject) throws StorageException {
         try {
             PutObjectRequest request = putObject.build();
@@ -144,6 +146,7 @@ public class OSSStoreService implements StorageApi {
         }
     }
 
+    @Override
     public byte[] getObject(String storeId) throws StorageException {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         try {
@@ -165,6 +168,7 @@ public class OSSStoreService implements StorageApi {
         }
     }
 
+    @Override
     public boolean deleteObject(String storeId) throws StorageException {
         try {
             logger.info("开始调用OSS存储删除文件，要删除的文件为{} at {]", storeId, DateUtil.formatNow());
@@ -177,6 +181,7 @@ public class OSSStoreService implements StorageApi {
         }
     }
 
+    @Override
     public String getHttpUrl(String storeId) throws StorageException {
         try {
             Date now = new Date();

@@ -139,7 +139,7 @@ public class PutObject {
 
             objectMetadata.setUserMetadata(userMetadata);
 
-            fileMetaInfo = new FileMetaInfo(fileName, extName, null, length, new Date().getTime());
+            fileMetaInfo = new FileMetaInfo(fileName, extName, null, length, System.currentTimeMillis());
         } else {
             objectMetadata.setContentLength(fileMetaInfo.getLength());
 

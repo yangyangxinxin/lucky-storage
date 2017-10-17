@@ -33,8 +33,9 @@ public class FileUtil {
      * @return
      */
     public static String getExtension(String fileName) {
-        if (StringUtils.INDEX_NOT_FOUND == StringUtils.indexOf(fileName, DOT))
+        if (StringUtils.INDEX_NOT_FOUND == StringUtils.indexOf(fileName, DOT)) {
             return StringUtils.EMPTY;
+        }
         String ext = StringUtils.substring(fileName,
                 StringUtils.lastIndexOf(fileName, DOT));
         return StringUtils.trimToEmpty(ext);

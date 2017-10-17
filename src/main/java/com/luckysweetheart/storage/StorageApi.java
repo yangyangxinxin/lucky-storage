@@ -11,7 +11,9 @@ import java.util.List;
 
 /**
  * 存储服务API
- * Created by yangxin on 2017/6/12.
+ *
+ * @author yangxin
+ * @date 2017/6/12
  */
 @Component
 public interface StorageApi {
