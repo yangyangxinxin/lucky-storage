@@ -7,6 +7,9 @@ import com.luckysweetheart.storage.StorageGroupService;
 import com.luckysweetheart.storage.dto.Group;
 import com.luckysweetheart.storage.dto.ObjectSummary;
 import com.luckysweetheart.storage.exception.StorageException;
+import com.luckysweetheart.storage.image.WatermarkProcess;
+import com.luckysweetheart.storage.image.base.PictureProcess;
+import com.luckysweetheart.storage.image.request.ProcessRequest;
 import com.luckysweetheart.storage.request.PutObject;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -143,5 +146,12 @@ public class TestConfig {
     public void test9() throws StorageException {
         Long size = storageApi.groupFileSize(storageGroupService.getDefaultGroupName());
         System.out.println(size);
+    }
+
+    @Test
+    public void test10() throws StorageException {
+        PictureProcess process = new WatermarkProcess("yangxin");
+        ProcessRequest request = new ProcessRequest("", process);
+        storageApi.pictureProcess(request);
     }
 }

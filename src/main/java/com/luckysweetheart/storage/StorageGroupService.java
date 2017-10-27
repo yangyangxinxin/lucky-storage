@@ -2,6 +2,7 @@ package com.luckysweetheart.storage;
 
 import com.luckysweetheart.storage.dto.Group;
 import com.luckysweetheart.storage.service.OSSStoreService;
+import com.luckysweetheart.storage.util.Common;
 import com.luckysweetheart.storage.util.SpringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -101,12 +102,7 @@ public strictfp class StorageGroupService {
     }
 
     public String getGroupName(String storeId) {
-        Assert.notNull(storeId, "storeId不能为空");
-        String[] keys = storeId.split("/");
-        if (keys.length > 0) {
-            return keys[0];
-        }
-        return null;
+        return Common.getGroupName(storeId);
     }
 
 }

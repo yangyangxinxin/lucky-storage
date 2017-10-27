@@ -8,6 +8,8 @@ import com.luckysweetheart.storage.dto.FileMetaInfo;
 import com.luckysweetheart.storage.dto.Group;
 import com.luckysweetheart.storage.dto.ObjectSummary;
 import com.luckysweetheart.storage.exception.StorageException;
+import com.luckysweetheart.storage.image.base.PictureProcess;
+import com.luckysweetheart.storage.image.request.ProcessRequest;
 import com.luckysweetheart.storage.request.PutObject;
 import com.luckysweetheart.storage.util.Cons;
 import com.luckysweetheart.storage.util.DateUtil;
@@ -244,6 +246,11 @@ public class OSSStoreService implements StorageApi {
             logger.error(e.getMessage(), e);
             throw new StorageException(e.getMessage());
         }
+    }
+
+    @Override
+    public String pictureProcess(ProcessRequest request) throws StorageException {
+        return null;
     }
 
 
