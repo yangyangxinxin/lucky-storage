@@ -2,14 +2,18 @@ import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.Bucket;
 import com.aliyun.oss.model.ObjectMetadata;
+import com.aliyun.oss.model.PutBucketImageRequest;
 import com.luckysweetheart.storage.StorageApi;
 import com.luckysweetheart.storage.StorageGroupService;
 import com.luckysweetheart.storage.dto.Group;
 import com.luckysweetheart.storage.dto.ObjectSummary;
 import com.luckysweetheart.storage.exception.StorageException;
+import com.luckysweetheart.storage.image.ResizeProcess;
+import com.luckysweetheart.storage.image.RotateProcess;
 import com.luckysweetheart.storage.image.WatermarkProcess;
 import com.luckysweetheart.storage.image.base.PictureProcess;
 import com.luckysweetheart.storage.image.request.ProcessRequest;
+import com.luckysweetheart.storage.image.response.ProcessResponse;
 import com.luckysweetheart.storage.request.PutObject;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -23,6 +27,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.io.*;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -30,7 +35,7 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath*:/spring/spring-storage.xml"})
-@ActiveProfiles("prod")
+@ActiveProfiles("dev")
 public class TestConfig {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -112,10 +117,10 @@ public class TestConfig {
             putObject.setBytes(bytes);
             putObject.setGroupName(storageGroupService.getDefaultGroupName());
             putObject.setExtName(".jpg");
-            putObject.setFileName("070");
+            putObject.setFileName("6963");
             putObject.setLength(bytes.length);
             String result = storageApi.putObject(putObject);
-            System.out.println(result); // lucky-user-dev/8847372361260077056.jpg
+            System.out.println(result); // prod-default/CF4C95C644E3485DA6ACA8549113F4DE.jpg
         }catch (Exception e){
             logger.error(e.getMessage(),e);
         }
@@ -150,8 +155,18 @@ public class TestConfig {
 
     @Test
     public void test10() throws StorageException {
+        PutBucketImageRequest putBucketImageRequest = new PutBucketImageRequest(storageGroupService.getDefaultGroupName());
         PictureProcess process = new WatermarkProcess("yangxin");
-        ProcessRequest request = new ProcessRequest("", process);
-        storageApi.pictureProcess(request);
+        process = new RotateProcess(90);
+        process = new ResizeProcess(200, 300);
+        ProcessRequest request = new ProcessRequest("prod-default_bHVja3k=_FE5C7E57D6644A8EA42427C3F9A3D122.jpg", process);
+        ProcessResponse response = storageApi.pictureProcess(request);
+        System.out.println(response.getUrl());
+    }
+
+    @Test
+    public void test11() {
+        URI endpoint = ossClient.getEndpoint();
+        System.out.println(endpoint.getHost());
     }
 }

@@ -3,7 +3,7 @@ package com.luckysweetheart.storage.image;
 import com.luckysweetheart.storage.image.base.PictureProcess;
 
 /**
- * 图片大小调整，图片裁剪
+ * 图片大小调整
  * Created by yangxin on 2017/10/27.
  */
 public class ResizeProcess implements PictureProcess {
@@ -19,17 +19,14 @@ public class ResizeProcess implements PictureProcess {
     private int height;
 
     /**
-     * 修整
+     * 是否强制
      */
     private boolean fixed;
-
-    public ResizeProcess() {
-    }
 
     public ResizeProcess(int weight, int height) {
         this.weight = weight;
         this.height = height;
-        this.fixed = true;
+        this.fixed = false;
     }
 
     public ResizeProcess(int weight, int height, boolean fixed) {

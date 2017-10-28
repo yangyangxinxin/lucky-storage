@@ -6,6 +6,7 @@ import com.luckysweetheart.storage.dto.ObjectSummary;
 import com.luckysweetheart.storage.exception.StorageException;
 import com.luckysweetheart.storage.image.base.PictureProcess;
 import com.luckysweetheart.storage.image.request.ProcessRequest;
+import com.luckysweetheart.storage.image.response.ProcessResponse;
 import com.luckysweetheart.storage.request.PutObject;
 import org.springframework.stereotype.Component;
 
@@ -119,6 +120,13 @@ public interface StorageApi {
      */
     FileMetaInfo getFileMetaInfo(String storeId) throws StorageException;
 
-    String pictureProcess(ProcessRequest request) throws StorageException;
+    /**
+     * 处理图片
+     *
+     * @param request
+     * @return
+     * @throws StorageException
+     */
+    ProcessResponse pictureProcess(ProcessRequest request) throws StorageException;
 
 }

@@ -14,9 +14,6 @@ public class ConvertFormatProcess implements PictureProcess {
      */
     private String format;
 
-    public ConvertFormatProcess() {
-    }
-
     public ConvertFormatProcess(String format) {
         this.format = format;
     }
@@ -34,8 +31,4 @@ public class ConvertFormatProcess implements PictureProcess {
         return "image/format," + format;
     }
 
-    public static void main(String[] args) {
-        String s = Base64.encodeBase64String("helloworld".getBytes());
-        System.out.println(s);
-    }
 }

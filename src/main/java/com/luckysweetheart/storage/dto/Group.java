@@ -17,6 +17,16 @@ public class Group implements Serializable {
 
     private String location;
 
+    private String endpoint;
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
     public String getLocation() {
         return location;
     }

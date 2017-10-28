@@ -9,7 +9,7 @@ public class Common {
 
     public static String getGroupName(String storeId) {
         Assert.notNull(storeId, "storeId不能为空");
-        String[] keys = storeId.split("/");
+        String[] keys = storeId.split(Cons.SEPARATOR);
         if (keys.length > 0) {
             return keys[0];
         }

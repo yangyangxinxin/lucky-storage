@@ -124,7 +124,7 @@ public class PutObject {
 
         if (StringUtils.isBlank(this.storeId)) {
             String key = UUID.randomUUID().toString().toUpperCase().replaceAll("-", "");
-            this.storeId = this.getGroupName() + "/" + key;
+            this.storeId = this.getGroupName() + Cons.SEPARATOR + key;
             if (StringUtils.isNotBlank(this.extName)) {
                 this.storeId += this.extName;
             }

@@ -2,7 +2,10 @@ package com.luckysweetheart.storage.util;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,6 +16,27 @@ import java.nio.file.Paths;
  */
 public class FileUtil {
     public static final String DOT = ".";
+
+    private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
+
+    /**
+     * 得到一个本地当前路径
+     *
+     * @return
+     */
+    public static String getFilePath() {
+        File file = new File(".");
+        String savePath = null;
+        try {
+            savePath = file.getCanonicalPath().replace("bin", "temp");
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+        if (null != savePath && (!savePath.endsWith("\\") || !savePath.endsWith("/"))) {
+            savePath += File.separator;
+        }
+        return savePath;
+    }
 
     /**
      * 获取没有扩展名的文件名

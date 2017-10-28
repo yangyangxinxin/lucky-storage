@@ -10,9 +10,12 @@ import com.luckysweetheart.storage.dto.ObjectSummary;
 import com.luckysweetheart.storage.exception.StorageException;
 import com.luckysweetheart.storage.image.base.PictureProcess;
 import com.luckysweetheart.storage.image.request.ProcessRequest;
+import com.luckysweetheart.storage.image.response.ProcessResponse;
 import com.luckysweetheart.storage.request.PutObject;
 import com.luckysweetheart.storage.util.Cons;
 import com.luckysweetheart.storage.util.DateUtil;
+import com.luckysweetheart.storage.util.FileUtil;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,6 +26,8 @@ import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
@@ -44,16 +49,11 @@ public class OSSStoreService implements StorageApi {
     private StorageGroupService storageGroupService;
 
     @Resource
-    private Environment environment;
+    private EnvironmentService environmentService;
 
     @Override
     public List<Group> groupList() throws StorageException {
-        String[] strings = environment.getActiveProfiles();
-        String profile = null;
-        if (strings != null && strings.length > 0) {
-            profile = strings[0];
-        }
-        return groupList(profile);
+        return groupList(environmentService.getProfile());
     }
 
     @Override
@@ -69,6 +69,7 @@ public class OSSStoreService implements StorageApi {
                     group.setName(bucket.getName());
                     group.setCreateTime(bucket.getCreationDate());
                     group.setLocation(bucket.getLocation());
+                    group.setEndpoint(bucket.getExtranetEndpoint());
                     groups.add(group);
                 }
             }
@@ -249,9 +250,49 @@ public class OSSStoreService implements StorageApi {
     }
 
     @Override
-    public String pictureProcess(ProcessRequest request) throws StorageException {
-        return null;
+    public ProcessResponse pictureProcess(ProcessRequest request) throws StorageException {
+        String storeId = request.getStoreId();
+        PictureProcess pictureProcess = request.getPictureProcess();
+
+        String process = pictureProcess.process();
+
+        GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(request.getGroup(), request.getStoreId());
+        generatePresignedUrlRequest.setProcess(process);
+
+        Date expire = request.getExpireTime();
+        if (request.getExpireTime() == null) {
+            expire = DateUtils.addYears(new Date(), 100);
+        }
+
+        generatePresignedUrlRequest.setExpiration(expire);
+        URL url = ossClient.generatePresignedUrl(generatePresignedUrlRequest);
+
+        String result = url.toString();
+
+        ProcessResponse response = new ProcessResponse();
+        response.setUrl(result);
+
+        GetObjectRequest getObjectRequest = new GetObjectRequest(request.getGroup(), storeId);
+        getObjectRequest.setProcess(process);
+
+        File file = new File(FileUtil.getFilePath() + System.currentTimeMillis() + ".jpg");
+
+        ossClient.getObject(getObjectRequest, file);
+
+        try {
+            logger.info(file.getPath());
+            byte[] bytes = FileUtils.readFileToByteArray(file);
+            response.setBytes(bytes);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        } finally {
+            if (environmentService.product()) {
+                if (file.exists()) {
+                    boolean delete = file.delete();
+                    logger.info("delete {} {}", file.getPath(), delete ? "success" : "fail");
+                }
+            }
+        }
+        return response;
     }
-
-
 }

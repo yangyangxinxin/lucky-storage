@@ -13,9 +13,6 @@ public class RotateProcess implements PictureProcess {
      */
     private int angle;
 
-    public RotateProcess() {
-    }
-
     public RotateProcess(int angle) {
         this.angle = angle;
     }

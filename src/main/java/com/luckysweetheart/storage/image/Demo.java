@@ -1,9 +1,10 @@
-package com.luckysweetheart.storage;
+package com.luckysweetheart.storage.image;
 
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.OSSException;
 import com.aliyun.oss.model.GetObjectRequest;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +23,7 @@ public class Demo {
 
 
     public static void main(String[] args) throws IOException {
+
 
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
 
