@@ -4,6 +4,8 @@ import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectRequest;
 import com.luckysweetheart.storage.StorageGroupService;
 import com.luckysweetheart.storage.dto.FileMetaInfo;
+import com.luckysweetheart.storage.strategy.DefaultStoreIdNamingStrategy;
+import com.luckysweetheart.storage.strategy.KeyNamingStrategy;
 import com.luckysweetheart.storage.util.Cons;
 import com.luckysweetheart.storage.util.IdWorker;
 import com.luckysweetheart.storage.util.SpringUtil;
@@ -53,6 +55,8 @@ public class PutObject {
     private long length;
 
     private FileMetaInfo fileMetaInfo;
+
+    private KeyNamingStrategy keyNamingStrategy;
 
     public FileMetaInfo getFileMetaInfo() {
         return fileMetaInfo;
@@ -110,6 +114,14 @@ public class PutObject {
         this.groupName = groupName;
     }
 
+    public KeyNamingStrategy getKeyNamingStrategy() {
+        return keyNamingStrategy;
+    }
+
+    public void setKeyNamingStrategy(KeyNamingStrategy keyNamingStrategy) {
+        this.keyNamingStrategy = keyNamingStrategy;
+    }
+
     /**
      * 构建OSS的PutObjectRequest对象
      *
@@ -122,13 +134,11 @@ public class PutObject {
         Assert.isTrue(StringUtils.isNotBlank(groupName), "存储组名不能为空");
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
 
-        if (StringUtils.isBlank(this.storeId)) {
-            String key = UUID.randomUUID().toString().toUpperCase().replaceAll("-", "");
-            this.storeId = this.getGroupName() + Cons.SEPARATOR + key;
-            if (StringUtils.isNotBlank(this.extName)) {
-                this.storeId += this.extName;
-            }
+        if (StringUtils.isBlank(this.storeId) || this.keyNamingStrategy == null) {
+            this.keyNamingStrategy = new DefaultStoreIdNamingStrategy(this.groupName, Cons.SEPARATOR, extName);
+            this.storeId = keyNamingStrategy.generate();
         }
+
         ObjectMetadata objectMetadata = new ObjectMetadata();
         if (fileMetaInfo == null) {
             objectMetadata.setContentLength(this.length);

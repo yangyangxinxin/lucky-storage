@@ -18,14 +18,14 @@ public class IdWorker {
 
     private long workerIdBits = 5L;
     private long datacenterIdBits = 5L;
-    private long maxWorkerId = -1L ^ (-1L << workerIdBits);
-    private long maxDatacenterId = -1L ^ (-1L << datacenterIdBits);
+    private long maxWorkerId = ~(-1L << workerIdBits);
+    private long maxDatacenterId = ~(-1L << datacenterIdBits);
     private long sequenceBits = 12L;
 
     private long workerIdShift = sequenceBits;
     private long datacenterIdShift = sequenceBits + workerIdBits;
     private long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
-    private long sequenceMask = -1L ^ (-1L << sequenceBits);
+    private long sequenceMask = ~(-1L << sequenceBits);
 
     private long lastTimestamp = -1L;
 

@@ -1,5 +1,6 @@
 import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.model.AccessControlList;
 import com.aliyun.oss.model.Bucket;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutBucketImageRequest;
@@ -159,6 +160,12 @@ public class TestConfig {
         PictureProcess process = new WatermarkProcess("yangxin");
         process = new RotateProcess(90);
         //process = new ResizeProcess(200, 300);
+        process = new PictureProcess() {
+            @Override
+            public String process() {
+                return "image/info";
+            }
+        };
         ProcessRequest request = new ProcessRequest("prod-default_bHVja3k=_FE5C7E57D6644A8EA42427C3F9A3D122.jpg", process);
         ProcessResponse response = storageApi.pictureProcess(request);
         System.out.println(response.getUrl());
@@ -168,5 +175,11 @@ public class TestConfig {
     public void test11() throws StorageException {
         Group group = storageApi.getGroupInfo(storageGroupService.getDefaultGroupName());
         System.out.println(group);
+    }
+
+    @Test
+    public void test12() {
+        AccessControlList bucketAcl = ossClient.getBucketAcl(storageGroupService.getDefaultGroupName());
+        System.out.println(bucketAcl);
     }
 }

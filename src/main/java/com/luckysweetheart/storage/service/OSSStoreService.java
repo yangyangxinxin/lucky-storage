@@ -309,6 +309,7 @@ public class OSSStoreService implements StorageApi {
         try {
             logger.info(file.getPath());
             byte[] bytes = FileUtils.readFileToByteArray(file);
+            System.out.println(new String(bytes));
             response.setBytes(bytes);
         } catch (IOException e) {
             logger.error(e.getMessage());
