@@ -8,6 +8,7 @@ import com.luckysweetheart.storage.dto.FileMetaInfo;
 import com.luckysweetheart.storage.dto.Group;
 import com.luckysweetheart.storage.dto.ObjectSummary;
 import com.luckysweetheart.storage.exception.StorageException;
+import com.luckysweetheart.storage.image.ConvertFormatProcess;
 import com.luckysweetheart.storage.image.base.PictureProcess;
 import com.luckysweetheart.storage.image.request.ProcessRequest;
 import com.luckysweetheart.storage.image.response.ProcessResponse;
@@ -69,7 +70,8 @@ public class OSSStoreService implements StorageApi {
                     group.setName(bucket.getName());
                     group.setCreateTime(bucket.getCreationDate());
                     group.setLocation(bucket.getLocation());
-                    group.setEndpoint(bucket.getExtranetEndpoint());
+                    group.setExtranetEndpoint(bucket.getExtranetEndpoint());
+                    group.setIntranetEndpoint(bucket.getIntranetEndpoint());
                     groups.add(group);
                 }
             }
@@ -79,6 +81,25 @@ public class OSSStoreService implements StorageApi {
         }
         logger.info("调用OSS存储获取Bucket列表结束 at {}", DateUtil.formatNow());
         return groups;
+    }
+
+    @Override
+    public Group getGroupInfo(String groupName) throws StorageException {
+        Assert.isTrue(StringUtils.isNotBlank(groupName), "group name can not be null");
+        try {
+            List<Group> groups = groupList(null);
+            if (groups != null && groups.size() > 0) {
+                for (Group group : groups) {
+                    if (StringUtils.equalsIgnoreCase(groupName, group.getName())) {
+                        return group;
+                    }
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new StorageException(e.getMessage());
+        }
     }
 
     @Override
@@ -275,7 +296,13 @@ public class OSSStoreService implements StorageApi {
         GetObjectRequest getObjectRequest = new GetObjectRequest(request.getGroup(), storeId);
         getObjectRequest.setProcess(process);
 
-        File file = new File(FileUtil.getFilePath() + System.currentTimeMillis() + ".jpg");
+        String extention = ".jpg";
+
+        if (pictureProcess instanceof ConvertFormatProcess) {
+            extention = ((ConvertFormatProcess) pictureProcess).getFormat();
+        }
+
+        File file = new File(FileUtil.getFilePath() + System.currentTimeMillis() + extention);
 
         ossClient.getObject(getObjectRequest, file);
 

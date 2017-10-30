@@ -39,6 +39,15 @@ public interface StorageApi {
     List<Group> groupList(String prefix) throws StorageException;
 
     /**
+     * 查询存储组信息
+     *
+     * @param groupName
+     * @return
+     * @throws StorageException
+     */
+    Group getGroupInfo(String groupName) throws StorageException;
+
+    /**
      * 获取某个组下的文件，最多能取1000个
      *
      * @param groupName 组名

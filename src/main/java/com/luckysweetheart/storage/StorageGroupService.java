@@ -1,6 +1,7 @@
 package com.luckysweetheart.storage;
 
 import com.luckysweetheart.storage.dto.Group;
+import com.luckysweetheart.storage.service.EnvironmentService;
 import com.luckysweetheart.storage.service.OSSStoreService;
 import com.luckysweetheart.storage.util.Common;
 import com.luckysweetheart.storage.util.SpringUtil;
@@ -37,7 +38,7 @@ public strictfp class StorageGroupService {
     private StorageApi storageApi;
 
     @Resource
-    private Environment environment;
+    private EnvironmentService environmentService;
 
     /**
      * 测试的bucketName
@@ -77,13 +78,7 @@ public strictfp class StorageGroupService {
 
     public void init() {
         try {
-            String[] strings = environment.getActiveProfiles();
-            String profile = "dev";
-            if (strings != null && strings.length > 0) {
-                System.out.println("active profiles 为：" + Arrays.toString(strings));
-                profile = strings[0];
-            }
-            List<Group> groups = storageApi.groupList(profile);
+            List<Group> groups = storageApi.groupList(environmentService.getProfile());
             for (Group group : groups) {
                 String name = group.getName();
                 if (name.contains("user")) {

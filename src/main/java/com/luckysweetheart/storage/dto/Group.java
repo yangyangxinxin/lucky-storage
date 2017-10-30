@@ -11,21 +11,30 @@ import java.util.Date;
  */
 public class Group implements Serializable {
 
+    /**
+     * 名称
+     */
     private String name;
 
+    /**
+     * 创建时间
+     */
     private Date createTime;
 
+    /**
+     * 地区
+     */
     private String location;
 
-    private String endpoint;
+    /**
+     * 内部地址
+     */
+    private String extranetEndpoint;
 
-    public String getEndpoint() {
-        return endpoint;
-    }
-
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
-    }
+    /**
+     * 外部地址
+     */
+    private String intranetEndpoint;
 
     public String getLocation() {
         return location;
@@ -49,6 +58,22 @@ public class Group implements Serializable {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getExtranetEndpoint() {
+        return extranetEndpoint;
+    }
+
+    public void setExtranetEndpoint(String extranetEndpoint) {
+        this.extranetEndpoint = extranetEndpoint;
+    }
+
+    public String getIntranetEndpoint() {
+        return intranetEndpoint;
+    }
+
+    public void setIntranetEndpoint(String intranetEndpoint) {
+        this.intranetEndpoint = intranetEndpoint;
     }
 
     @Override
