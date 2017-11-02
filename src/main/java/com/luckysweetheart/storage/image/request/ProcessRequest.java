@@ -26,9 +26,23 @@ public class ProcessRequest implements Serializable {
      */
     private Date expireTime;
 
+    /**
+     * 是否需要返回byte数组，如果不需要则只返回图片的URL地址。
+     * 返回byte数组需要把文件下载下来，再取byte数组，一般在网页上直接显示处理后的图片是不需要的。
+     * 默认不需要
+     */
+    private boolean needByte = false;
+
     public ProcessRequest(String storeId, PictureProcess pictureProcess) {
         this.storeId = storeId;
         this.pictureProcess = pictureProcess;
+        this.needByte = false;
+    }
+
+    public ProcessRequest(String storeId, PictureProcess pictureProcess, boolean needByte) {
+        this.storeId = storeId;
+        this.pictureProcess = pictureProcess;
+        this.needByte = needByte;
     }
 
     public ProcessRequest() {
@@ -61,4 +75,13 @@ public class ProcessRequest implements Serializable {
     public void setExpireTime(Date expireTime) {
         this.expireTime = expireTime;
     }
+
+    public boolean isNeedByte() {
+        return needByte;
+    }
+
+    public void setNeedByte(boolean needByte) {
+        this.needByte = needByte;
+    }
+
 }

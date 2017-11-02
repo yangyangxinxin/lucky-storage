@@ -25,7 +25,7 @@ import java.util.UUID;
 public class PutObject {
 
     /**
-     * 文件二进制数组
+     * 文件字节数组
      */
     private byte[] bytes;
 

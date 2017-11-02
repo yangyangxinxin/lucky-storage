@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class ProcessResponse implements Serializable {
 
     /**
-     * 处理过的文件二进制数组
+     * 处理过的文件字节数组
      */
     private byte[] bytes;
 

@@ -21,7 +21,7 @@ import java.util.List;
  * Created by yangxin on 2017/5/26.
  */
 @Service
-public strictfp class StorageGroupService {
+public class StorageGroupService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 

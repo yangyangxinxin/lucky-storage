@@ -1,21 +1,20 @@
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.OSSClient;
-import com.aliyun.oss.model.AccessControlList;
-import com.aliyun.oss.model.Bucket;
-import com.aliyun.oss.model.ObjectMetadata;
-import com.aliyun.oss.model.PutBucketImageRequest;
+import com.aliyun.oss.model.*;
 import com.luckysweetheart.storage.StorageApi;
 import com.luckysweetheart.storage.StorageGroupService;
 import com.luckysweetheart.storage.dto.Group;
 import com.luckysweetheart.storage.dto.ObjectSummary;
 import com.luckysweetheart.storage.exception.StorageException;
-import com.luckysweetheart.storage.image.ResizeProcess;
-import com.luckysweetheart.storage.image.RotateProcess;
-import com.luckysweetheart.storage.image.WatermarkProcess;
+import com.luckysweetheart.storage.image.*;
 import com.luckysweetheart.storage.image.base.PictureProcess;
 import com.luckysweetheart.storage.image.request.ProcessRequest;
 import com.luckysweetheart.storage.image.response.ProcessResponse;
 import com.luckysweetheart.storage.request.PutObject;
+import com.luckysweetheart.storage.util.Common;
+import com.luckysweetheart.storage.util.FileUtil;
+import com.sun.org.apache.regexp.internal.RE;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,7 +60,7 @@ public class TestConfig {
     }
 
     @Test
-    public void test1(){
+    public void test1() {
         System.out.println(storageGroupService.getDefaultGroupName());
         System.out.println(storageGroupService.getPhotoGroupName());
         System.out.println(storageGroupService.getUserGroupName());
@@ -86,7 +85,7 @@ public class TestConfig {
     }
 
     @Test
-    public void test3(){
+    public void test3() {
         PutObject putObject = new PutObject();
         String str = "heello";
         byte[] bytes = str.getBytes();
@@ -101,7 +100,7 @@ public class TestConfig {
     }
 
     @Test
-    public void test4(){
+    public void test4() {
         try {
             byte[] bytes = storageApi.getObject("lucky-user-dev/350F9C92127C40128BEA12B1B5C88C6E");
             System.out.println(new String(bytes));
@@ -111,7 +110,7 @@ public class TestConfig {
     }
 
     @Test
-    public void test5(){
+    public void test5() {
         try {
             byte[] bytes = FileUtils.readFileToByteArray(new File("C:\\Users\\dp\\Desktop\\图片\\070.jpg"));
             PutObject putObject = new PutObject();
@@ -122,13 +121,13 @@ public class TestConfig {
             putObject.setLength(bytes.length);
             String result = storageApi.putObject(putObject);
             System.out.println(result); // prod-default/CF4C95C644E3485DA6ACA8549113F4DE.jpg
-        }catch (Exception e){
-            logger.error(e.getMessage(),e);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
     @Test
-    public void test6(){
+    public void test6() {
         try {
             String httpUrl = storageApi.getHttpUrl("lucky-bubu-dev/FDC5930D777944839413C3FCFC31D75A.jpg");
             System.out.println(httpUrl);
@@ -160,12 +159,7 @@ public class TestConfig {
         PictureProcess process = new WatermarkProcess("yangxin");
         process = new RotateProcess(90);
         //process = new ResizeProcess(200, 300);
-        process = new PictureProcess() {
-            @Override
-            public String process() {
-                return "image/info";
-            }
-        };
+        process = new BlurProcess(50, 50);
         ProcessRequest request = new ProcessRequest("prod-default_bHVja3k=_FE5C7E57D6644A8EA42427C3F9A3D122.jpg", process);
         ProcessResponse response = storageApi.pictureProcess(request);
         System.out.println(response.getUrl());
@@ -179,7 +173,52 @@ public class TestConfig {
 
     @Test
     public void test12() {
-        AccessControlList bucketAcl = ossClient.getBucketAcl(storageGroupService.getDefaultGroupName());
-        System.out.println(bucketAcl);
+        UserQos userQos = ossClient.getBucketStorageCapacity(storageGroupService.getDefaultGroupName());
+        System.out.println(JSON.toJSONString(userQos));
+    }
+
+    @Test
+    public void test13() throws IOException {
+        String key = "prod-default_bHVja3k=_FE5C7E57D6644A8EA42427C3F9A3D122.jpg";
+        PictureProcess process = new PictureProcess() {
+            @Override
+            public String process() {
+                return "image/info";
+            }
+        };
+
+        GetObjectRequest getObjectRequest = new GetObjectRequest(Common.getGroupName(key), key);
+        getObjectRequest.setProcess(process.process());
+
+        File file = new File(FileUtil.getFilePath() + System.currentTimeMillis() + ".txt");
+
+        ossClient.getObject(getObjectRequest, file);
+
+        byte[] bytes = FileUtils.readFileToByteArray(file);
+
+        String result = new String(bytes);
+
+        JSONObject jsonObject = JSON.parseObject(result);
+        System.out.println(jsonObject);
+    }
+
+    @Test
+    public void test14() throws StorageException {
+        BlurProcess blurProcess = new BlurProcess(30, 20);
+
+        ResizeProcess resizeProcess = new ResizeProcess(200, 150);
+
+        WatermarkProcess watermarkProcess = new WatermarkProcess("yangxin");
+
+        SharpenProcess sharpenProcess = new SharpenProcess(0);
+
+        CompositeProcess compositeProcess = new CompositeProcess(sharpenProcess, blurProcess, watermarkProcess, resizeProcess);
+
+        ProcessRequest request = new ProcessRequest();
+        request.setPictureProcess(compositeProcess);
+        request.setStoreId("prod-default_bHVja3k=_FE5C7E57D6644A8EA42427C3F9A3D122.jpg");
+
+        ProcessResponse response = storageApi.pictureProcess(request);
+        System.out.println(response.getUrl());
     }
 }

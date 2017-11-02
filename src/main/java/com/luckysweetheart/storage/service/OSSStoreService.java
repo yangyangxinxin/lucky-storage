@@ -12,6 +12,7 @@ import com.luckysweetheart.storage.image.ConvertFormatProcess;
 import com.luckysweetheart.storage.image.base.PictureProcess;
 import com.luckysweetheart.storage.image.request.ProcessRequest;
 import com.luckysweetheart.storage.image.response.ProcessResponse;
+import com.luckysweetheart.storage.request.CopyObject;
 import com.luckysweetheart.storage.request.PutObject;
 import com.luckysweetheart.storage.util.Cons;
 import com.luckysweetheart.storage.util.DateUtil;
@@ -87,15 +88,15 @@ public class OSSStoreService implements StorageApi {
     public Group getGroupInfo(String groupName) throws StorageException {
         Assert.isTrue(StringUtils.isNotBlank(groupName), "group name can not be null");
         try {
-            List<Group> groups = groupList(null);
-            if (groups != null && groups.size() > 0) {
-                for (Group group : groups) {
-                    if (StringUtils.equalsIgnoreCase(groupName, group.getName())) {
-                        return group;
-                    }
-                }
-            }
-            return null;
+            BucketInfo bucketInfo = ossClient.getBucketInfo(groupName);
+            Bucket bucket = bucketInfo.getBucket();
+            Group group = new Group();
+            group.setName(bucket.getName());
+            group.setCreateTime(bucket.getCreationDate());
+            group.setLocation(bucket.getLocation());
+            group.setExtranetEndpoint(bucket.getExtranetEndpoint());
+            group.setIntranetEndpoint(bucket.getIntranetEndpoint());
+            return group;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new StorageException(e.getMessage());
@@ -168,6 +169,18 @@ public class OSSStoreService implements StorageApi {
             logger.error(e.getMessage(), e);
             throw new StorageException(e.getMessage());
         }
+    }
+
+    @Override
+    public String copyObject(CopyObject copyObject) throws StorageException {
+        try {
+            Assert.notNull(copyObject, "copyObject can not be null");
+            ossClient.copyObject(copyObject.getSourceGroupName(), copyObject.getSourceStoreId(), copyObject.getTargetGroupName(), copyObject.getTargetStoreId());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new StorageException(e.getMessage());
+        }
+        return copyObject.getTargetStoreId();
     }
 
     @Override
@@ -272,55 +285,58 @@ public class OSSStoreService implements StorageApi {
 
     @Override
     public ProcessResponse pictureProcess(ProcessRequest request) throws StorageException {
-        String storeId = request.getStoreId();
-        PictureProcess pictureProcess = request.getPictureProcess();
-
-        String process = pictureProcess.process();
-
-        GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(request.getGroup(), request.getStoreId());
-        generatePresignedUrlRequest.setProcess(process);
-
-        Date expire = request.getExpireTime();
-        if (request.getExpireTime() == null) {
-            expire = DateUtils.addYears(new Date(), 100);
-        }
-
-        generatePresignedUrlRequest.setExpiration(expire);
-        URL url = ossClient.generatePresignedUrl(generatePresignedUrlRequest);
-
-        String result = url.toString();
-
-        ProcessResponse response = new ProcessResponse();
-        response.setUrl(result);
-
-        GetObjectRequest getObjectRequest = new GetObjectRequest(request.getGroup(), storeId);
-        getObjectRequest.setProcess(process);
-
-        String extention = ".jpg";
-
-        if (pictureProcess instanceof ConvertFormatProcess) {
-            extention = ((ConvertFormatProcess) pictureProcess).getFormat();
-        }
-
-        File file = new File(FileUtil.getFilePath() + System.currentTimeMillis() + extention);
-
-        ossClient.getObject(getObjectRequest, file);
-
         try {
-            logger.info(file.getPath());
-            byte[] bytes = FileUtils.readFileToByteArray(file);
-            System.out.println(new String(bytes));
-            response.setBytes(bytes);
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        } finally {
-            if (environmentService.product()) {
-                if (file.exists()) {
-                    boolean delete = file.delete();
-                    logger.info("delete {} {}", file.getPath(), delete ? "success" : "fail");
+            String storeId = request.getStoreId();
+            PictureProcess pictureProcess = request.getPictureProcess();
+
+            String process = pictureProcess.process();
+            logger.info(process);
+
+            GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(request.getGroup(), request.getStoreId());
+            generatePresignedUrlRequest.setProcess(process);
+
+            Date expire = request.getExpireTime();
+            if (request.getExpireTime() == null) {
+                expire = DateUtils.addYears(new Date(), 100);
+            }
+
+            generatePresignedUrlRequest.setExpiration(expire);
+            URL url = ossClient.generatePresignedUrl(generatePresignedUrlRequest);
+
+            String result = url.toString();
+
+            ProcessResponse response = new ProcessResponse();
+            response.setUrl(result);
+
+            if (request.isNeedByte()) {
+                GetObjectRequest getObjectRequest = new GetObjectRequest(request.getGroup(), storeId);
+                getObjectRequest.setProcess(process);
+                String extention = ".jpg";
+                if (pictureProcess instanceof ConvertFormatProcess) {
+                    extention = ((ConvertFormatProcess) pictureProcess).getFormat();
+                }
+                File file = new File(FileUtil.getFilePath() + System.currentTimeMillis() + extention);
+                ossClient.getObject(getObjectRequest, file);
+                try {
+                    logger.info(file.getPath());
+                    byte[] bytes = FileUtils.readFileToByteArray(file);
+                    response.setBytes(bytes);
+                } catch (IOException e) {
+                    logger.error(e.getMessage());
+                } finally {
+                    if (environmentService.product()) {
+                        if (file.exists()) {
+                            boolean delete = file.delete();
+                            logger.info("delete {} {}", file.getPath(), delete ? "success" : "fail");
+                        }
+                    }
                 }
             }
+            return response;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new StorageException(e.getMessage());
         }
-        return response;
+
     }
 }

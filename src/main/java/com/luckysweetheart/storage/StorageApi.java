@@ -7,6 +7,7 @@ import com.luckysweetheart.storage.exception.StorageException;
 import com.luckysweetheart.storage.image.base.PictureProcess;
 import com.luckysweetheart.storage.image.request.ProcessRequest;
 import com.luckysweetheart.storage.image.response.ProcessResponse;
+import com.luckysweetheart.storage.request.CopyObject;
 import com.luckysweetheart.storage.request.PutObject;
 import org.springframework.stereotype.Component;
 
@@ -73,6 +74,14 @@ public interface StorageApi {
      * @throws StorageException
      */
     String putObject(PutObject putObject) throws StorageException;
+
+    /**
+     * 复制文件
+     *
+     * @return
+     * @throws StorageException
+     */
+    String copyObject(CopyObject copyObject) throws StorageException;
 
     /**
      * 下载文件
