@@ -1,6 +1,7 @@
 package com.luckysweetheart.storage.image;
 
 import com.luckysweetheart.storage.image.base.PictureProcess;
+import com.luckysweetheart.storage.util.Cons;
 import org.apache.commons.codec.binary.Base64;
 
 /**
@@ -28,7 +29,7 @@ public class ConvertFormatProcess implements PictureProcess {
 
     @Override
     public String process() {
-        return "image/format," + format;
+        return Cons.PREFIX + "format," + format;
     }
 
 }

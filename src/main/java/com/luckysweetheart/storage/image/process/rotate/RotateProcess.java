@@ -1,6 +1,7 @@
 package com.luckysweetheart.storage.image.process.rotate;
 
 import com.luckysweetheart.storage.image.base.PictureProcess;
+import com.luckysweetheart.storage.util.Cons;
 
 /**
  * 旋转图片处理
@@ -27,6 +28,6 @@ public class RotateProcess implements PictureProcess {
 
     @Override
     public String process() {
-        return "image/rotate," + angle;
+        return Cons.PREFIX + "rotate," + angle;
     }
 }

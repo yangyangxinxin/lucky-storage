@@ -1,6 +1,7 @@
 package com.luckysweetheart.storage.image.process.rotate;
 
 import com.luckysweetheart.storage.image.base.PictureProcess;
+import com.luckysweetheart.storage.util.Cons;
 
 /**
  * 自适应旋转
@@ -34,6 +35,6 @@ public class AutoOrientRotateProcess implements PictureProcess {
      */
     @Override
     public String process() {
-        return "image/auto-orient," + value;
+        return Cons.PREFIX + "auto-orient," + value;
     }
 }

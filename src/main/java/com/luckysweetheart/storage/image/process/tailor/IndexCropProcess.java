@@ -1,6 +1,7 @@
 package com.luckysweetheart.storage.image.process.tailor;
 
 import com.luckysweetheart.storage.image.base.PictureProcess;
+import com.luckysweetheart.storage.util.Cons;
 
 import static com.luckysweetheart.storage.image.util.ProcessUtils.dealResult;
 
@@ -69,7 +70,8 @@ public class IndexCropProcess implements PictureProcess {
      */
     @Override
     public String process() {
-        StringBuilder sb = new StringBuilder("image/indexcrop,");
+        StringBuilder sb = new StringBuilder(Cons.PREFIX);
+        sb.append("indexcrop,");
         if (x > 0) {
             sb.append("x_").append(x).append(",");
         }

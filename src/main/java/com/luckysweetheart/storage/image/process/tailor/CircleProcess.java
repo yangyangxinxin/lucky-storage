@@ -1,6 +1,7 @@
 package com.luckysweetheart.storage.image.process.tailor;
 
 import com.luckysweetheart.storage.image.base.PictureProcess;
+import com.luckysweetheart.storage.util.Cons;
 
 /**
  * 内切圆
@@ -38,6 +39,6 @@ public class CircleProcess implements PictureProcess {
      */
     @Override
     public String process() {
-        return "image/circle,r_" + radius;
+        return Cons.PREFIX + "circle,r_" + radius;
     }
 }

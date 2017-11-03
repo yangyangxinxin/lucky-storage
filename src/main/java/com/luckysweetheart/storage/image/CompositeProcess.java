@@ -1,6 +1,7 @@
 package com.luckysweetheart.storage.image;
 
 import com.luckysweetheart.storage.image.base.PictureProcess;
+import com.luckysweetheart.storage.util.Cons;
 
 /**
  * 图片复合处理
@@ -24,11 +25,12 @@ public class CompositeProcess implements PictureProcess {
             return pictureProcesses[0].process();
         }
         StringBuilder sb = new StringBuilder();
+
         sb.append(pictureProcesses[0].process());
 
         for (int i = 1; i < pictureProcesses.length; i++) {
             String process = pictureProcesses[i].process();
-            String replace = process.replace("image/", "/");
+            String replace = process.replace(Cons.PREFIX, "/");
             sb.append(replace);
         }
         return sb.toString();

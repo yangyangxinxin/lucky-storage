@@ -16,5 +16,13 @@ public interface Cons {
      */
     String KEY_EXTNAME = "extname";
 
+    /**
+     * storeId分隔符
+     */
     String SEPARATOR = "_" + Base64.encodeBase64String("lucky".getBytes()) + "_";
+
+    /**
+     * 图片处理前缀
+     */
+    String PREFIX = "image/";
 }

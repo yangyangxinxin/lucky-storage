@@ -1,6 +1,7 @@
 package com.luckysweetheart.storage.image;
 
 import com.luckysweetheart.storage.image.base.PictureProcess;
+import com.luckysweetheart.storage.util.Cons;
 import org.apache.commons.codec.binary.Base64;
 
 /**
@@ -29,6 +30,6 @@ public class WatermarkProcess implements PictureProcess {
 
     @Override
     public String process() {
-        return "image/watermark,text_" + Base64.encodeBase64String(text.getBytes());
+        return Cons.PREFIX + "watermark,text_" + Base64.encodeBase64String(text.getBytes());
     }
 }

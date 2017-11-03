@@ -1,6 +1,7 @@
 package com.luckysweetheart.storage.image;
 
 import com.luckysweetheart.storage.image.base.PictureProcess;
+import com.luckysweetheart.storage.util.Cons;
 
 /**
  * 图片锐化
@@ -27,6 +28,6 @@ public class SharpenProcess implements PictureProcess {
 
     @Override
     public String process() {
-        return "image/sharpen," + sharpen;
+        return Cons.PREFIX + "sharpen," + sharpen;
     }
 }

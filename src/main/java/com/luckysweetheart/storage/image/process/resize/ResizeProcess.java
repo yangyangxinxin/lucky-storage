@@ -1,6 +1,7 @@
 package com.luckysweetheart.storage.image.process.resize;
 
 import com.luckysweetheart.storage.image.base.PictureProcess;
+import com.luckysweetheart.storage.util.Cons;
 
 /**
  * 图片缩放 https://help.aliyun.com/document_detail/44688.html?spm=5176.doc44687.6.945.nMoGlY
@@ -63,10 +64,10 @@ public class ResizeProcess implements PictureProcess {
     public String process() {
         String style;
         if (fixed) {
-            style = "image/resize,m_fixed,w_" + weight + ",h_" + height;
+            style = Cons.PREFIX + "resize,m_fixed,w_" + weight + ",h_" + height;
             return style;
         } else {
-            style = "image/resize,w_" + weight + ",h_" + height;
+            style = Cons.PREFIX + "resize,w_" + weight + ",h_" + height;
             return style;
         }
     }

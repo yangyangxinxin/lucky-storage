@@ -1,6 +1,7 @@
 package com.luckysweetheart.storage.image;
 
 import com.luckysweetheart.storage.image.base.PictureProcess;
+import com.luckysweetheart.storage.util.Cons;
 
 /**
  * 图片模糊处理
@@ -52,6 +53,6 @@ public class BlurProcess implements PictureProcess {
 
     @Override
     public String process() {
-        return "image/blur,r_" + radius + ",s_" + sd;
+        return Cons.PREFIX + "blur,r_" + radius + ",s_" + sd;
     }
 }

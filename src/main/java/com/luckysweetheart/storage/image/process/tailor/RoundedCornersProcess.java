@@ -1,6 +1,7 @@
 package com.luckysweetheart.storage.image.process.tailor;
 
 import com.luckysweetheart.storage.image.base.PictureProcess;
+import com.luckysweetheart.storage.util.Cons;
 
 /**
  * 圆角矩形
@@ -35,6 +36,6 @@ public class RoundedCornersProcess implements PictureProcess {
      */
     @Override
     public String process() {
-        return "image/rounded-corners,r_" + radius;
+        return Cons.PREFIX + "rounded-corners,r_" + radius;
     }
 }
