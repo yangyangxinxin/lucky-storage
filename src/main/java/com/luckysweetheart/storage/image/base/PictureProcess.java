@@ -13,6 +13,11 @@ package com.luckysweetheart.storage.image.base;
 public interface PictureProcess {
 
     /**
+     * 图片处理前缀
+     */
+    String PREFIX = "image/";
+
+    /**
      * 图片处理
      *
      * @return image/action,parame_value .

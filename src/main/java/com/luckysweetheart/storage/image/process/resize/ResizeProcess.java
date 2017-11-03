@@ -1,9 +1,9 @@
-package com.luckysweetheart.storage.image;
+package com.luckysweetheart.storage.image.process.resize;
 
 import com.luckysweetheart.storage.image.base.PictureProcess;
 
 /**
- * 图片大小调整
+ * 图片缩放 https://help.aliyun.com/document_detail/44688.html?spm=5176.doc44687.6.945.nMoGlY
  * Created by yangxin on 2017/10/27.
  */
 public class ResizeProcess implements PictureProcess {

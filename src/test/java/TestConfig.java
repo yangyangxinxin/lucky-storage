@@ -5,16 +5,16 @@ import com.aliyun.oss.model.*;
 import com.luckysweetheart.storage.StorageApi;
 import com.luckysweetheart.storage.StorageGroupService;
 import com.luckysweetheart.storage.dto.Group;
-import com.luckysweetheart.storage.dto.ObjectSummary;
 import com.luckysweetheart.storage.exception.StorageException;
 import com.luckysweetheart.storage.image.*;
 import com.luckysweetheart.storage.image.base.PictureProcess;
+import com.luckysweetheart.storage.image.process.resize.ResizeProcess;
+import com.luckysweetheart.storage.image.process.rotate.RotateProcess;
 import com.luckysweetheart.storage.image.request.ProcessRequest;
 import com.luckysweetheart.storage.image.response.ProcessResponse;
 import com.luckysweetheart.storage.request.PutObject;
 import com.luckysweetheart.storage.util.Common;
 import com.luckysweetheart.storage.util.FileUtil;
-import com.sun.org.apache.regexp.internal.RE;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +27,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.io.*;
-import java.net.URI;
 import java.util.List;
 
 /**

@@ -1,4 +1,4 @@
-package com.luckysweetheart.storage.image;
+package com.luckysweetheart.storage.image.process.rotate;
 
 import com.luckysweetheart.storage.image.base.PictureProcess;
 
