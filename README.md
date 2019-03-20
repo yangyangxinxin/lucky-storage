@@ -1,2 +1,2 @@
-# lucky-storage
+# oss-storage
 存储服务
